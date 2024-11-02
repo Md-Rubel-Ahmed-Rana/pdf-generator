@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: pdf-generator
+    build:
+      dockerfile: Dockerfile
+      context: ./
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - "5005:5005"
+    restart: always
+    env_file:
+      - .env
