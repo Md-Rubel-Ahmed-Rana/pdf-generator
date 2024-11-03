@@ -4,7 +4,11 @@ import { CertificateService } from "../services/certificate.service";
 class Controller {
   async createCertificate(req: Request, res: Response) {
     try {
-      const result = await CertificateService.createCertificate(req.body);
+      const shouldDeploy = req.query?.shouldDeploy as unknown as boolean;
+      const result = await CertificateService.createCertificate(
+        req.body,
+        shouldDeploy
+      );
       res.status(201).json({
         statusCode: 201,
         success: true,
@@ -12,6 +16,7 @@ class Controller {
         data: result,
       });
     } catch (error) {
+      console.log(error);
       res.status(500).json({
         statusCode: 500,
         success: false,

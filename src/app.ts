@@ -19,13 +19,8 @@ app.use(morgan("dev"));
 
 // set the view engine to ejs
 app.set("view engine", "ejs");
-
-// read static files
-app.use(express.static(path.join(__dirname, "public")));
-app.use(express.static("public"));
-
-// Set the path to the views directory
 app.set("views", path.join(__dirname, "views"));
+app.set("public", path.join(__dirname, "public"));
 
 app.get("/", (req, res) => {
   res.render("index");

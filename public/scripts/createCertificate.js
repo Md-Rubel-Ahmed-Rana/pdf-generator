@@ -1,6 +1,7 @@
 document
   .getElementById("generateCertificateButton")
   .addEventListener("click", async () => {
+    console.log("Clicked");
     const data = {
       studentName: document.getElementById("studentName").value,
       courseName: document.getElementById("courseName").value,
@@ -9,10 +10,11 @@ document
         .value.split(",")
         .map((tech) => tech.trim()),
     };
+    console.log(data);
 
     try {
       const response = await fetch(
-        "https://pdf-generator-w70m.onrender.com/api/v1/certificate/create",
+        "http://localhost:5005/api/v1/certificate/create",
         {
           method: "POST",
           headers: {

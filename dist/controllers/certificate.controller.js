@@ -14,8 +14,10 @@ const certificate_service_1 = require("../services/certificate.service");
 class Controller {
     createCertificate(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             try {
-                const result = yield certificate_service_1.CertificateService.createCertificate(req.body);
+                const shouldDeploy = (_a = req.query) === null || _a === void 0 ? void 0 : _a.shouldDeploy;
+                const result = yield certificate_service_1.CertificateService.createCertificate(req.body, shouldDeploy);
                 res.status(201).json({
                     statusCode: 201,
                     success: true,
@@ -24,6 +26,7 @@ class Controller {
                 });
             }
             catch (error) {
+                console.log(error);
                 res.status(500).json({
                     statusCode: 500,
                     success: false,

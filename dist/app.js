@@ -20,11 +20,8 @@ app.use((0, helmet_1.default)());
 app.use((0, morgan_1.default)("dev"));
 // set the view engine to ejs
 app.set("view engine", "ejs");
-// read static files
-app.use(express_1.default.static(path_1.default.join(__dirname, "public")));
-app.use(express_1.default.static("public"));
-// Set the path to the views directory
 app.set("views", path_1.default.join(__dirname, "views"));
+app.set("public", path_1.default.join(__dirname, "public"));
 app.get("/", (req, res) => {
     res.render("index");
 });

@@ -7,7 +7,7 @@
     "start": "node ./dist/server.js",
     "dev:test": "ts-node-dev --respawn --transpile-only src/testServer.ts",
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "build": "npx tsc",
+    "build": "npx tsc && copyfiles -u 1 src/views/**/* dist/views",
     "docker:build": "docker-compose build",
     "docker:start": "docker-compose up -d",
     "docker:stop": "docker-compose down",
@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "autoprefixer": "^10.4.20",
+    "copyfiles": "^2.4.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
