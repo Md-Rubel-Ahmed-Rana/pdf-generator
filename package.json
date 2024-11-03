@@ -10,16 +10,22 @@
     "build": "npx tsc",
     "docker:build": "docker-compose build",
     "docker:start": "docker-compose up -d",
-    "docker:stop": "docker-compose down"
+    "docker:stop": "docker-compose down",
+    "build:css": "npx tailwindcss -i ./public/css/tailwind.css -o ./public/css/output.css --watch"
   },
   "dependencies": {
+    "autoprefixer": "^10.4.20",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
     "express": "^4.19.2",
     "firebase-admin": "^12.7.0",
     "helmet": "^7.1.0",
     "morgan": "^1.10.0",
     "pdf-lib": "^1.17.1",
+    "postcss": "^8.4.47",
+    "postcss-cli": "^11.0.0",
+    "tailwindcss": "^3.4.14",
     "zod": "^3.23.5"
   },
   "devDependencies": {
