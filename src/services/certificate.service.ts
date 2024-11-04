@@ -77,6 +77,10 @@ class Service {
 
     await this.drawLogo(pdfDoc, page);
 
+    await this.drawCeoSignature(pdfDoc, page, colors, fonts);
+
+    await this.drawCAOSignature(pdfDoc, page, colors, fonts);
+
     return shouldDeploy
       ? this.deployCertificate(pdfDoc, studentName)
       : this.savePdf(pdfDoc, studentName);
@@ -273,6 +277,86 @@ class Service {
       y: bottomRightMargin,
       width: logoWidth,
       height: logoHeight,
+    });
+  }
+
+  private async drawCeoSignature(
+    pdfDoc: PDFDocument,
+    page: PDFPage,
+    colors: { bodyColor: RGB },
+    fonts: { font: PDFFont; boldFont: PDFFont }
+  ) {
+    const ceoSignatureUrl =
+      "https://firebasestorage.googleapis.com/v0/b/up-skillium.appspot.com/o/up-skillium%2Fassets%2Frubel-signature.png?alt=media&token=9e49c00e-e788-4cae-9d71-c687ea68b023";
+    const signatureBytes = await fetch(ceoSignatureUrl).then((res) =>
+      res.arrayBuffer()
+    );
+    const signatureImage = await pdfDoc.embedPng(signatureBytes);
+
+    const signatureWidth = 100;
+    const signatureHeight =
+      signatureWidth * (signatureImage.height / signatureImage.width);
+    page.drawImage(signatureImage, {
+      x: 50,
+      y: 60,
+      width: signatureWidth,
+      height: signatureHeight,
+    });
+
+    page.drawText("Rubel Ahmed Rana", {
+      x: 50,
+      y: 50,
+      size: 12,
+      color: colors.bodyColor,
+      font: fonts.boldFont,
+    });
+
+    page.drawText("CEO, Up Skillium", {
+      x: 50,
+      y: 35,
+      size: 12,
+      color: colors.bodyColor,
+      font: fonts.font,
+    });
+  }
+  private async drawCAOSignature(
+    pdfDoc: PDFDocument,
+    page: PDFPage,
+    colors: { bodyColor: RGB },
+    fonts: { font: PDFFont; boldFont: PDFFont }
+  ) {
+    const caoSignatureUrl =
+      "https://firebasestorage.googleapis.com/v0/b/up-skillium.appspot.com/o/up-skillium%2Fassets%2Fnajim-signature.png?alt=media&token=e1f6018a-0186-4bba-abbf-5dc85b2c4b69";
+    const signatureBytes = await fetch(caoSignatureUrl).then((res) =>
+      res.arrayBuffer()
+    );
+    const signatureImage = await pdfDoc.embedPng(signatureBytes);
+    const xPosition = 250;
+
+    const signatureWidth = 100;
+    const signatureHeight =
+      signatureWidth * (signatureImage.height / signatureImage.width);
+    page.drawImage(signatureImage, {
+      x: xPosition,
+      y: 60,
+      width: signatureWidth,
+      height: signatureHeight,
+    });
+
+    page.drawText("Najim Uddin Helal", {
+      x: xPosition,
+      y: 50,
+      size: 12,
+      color: colors.bodyColor,
+      font: fonts.boldFont,
+    });
+
+    page.drawText("CAO, Up Skillium", {
+      x: xPosition,
+      y: 35,
+      size: 12,
+      color: colors.bodyColor,
+      font: fonts.font,
     });
   }
 
