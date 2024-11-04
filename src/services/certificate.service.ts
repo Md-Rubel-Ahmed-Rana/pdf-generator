@@ -32,7 +32,7 @@ class Service {
       courseCompletion: 412,
       skills: 352,
       message: 282,
-      footer: 150,
+      footer: 200,
     };
 
     this.drawBorder(page, colors.purpleColor);
@@ -74,6 +74,8 @@ class Service {
       margins,
       yPositions.footer
     );
+
+    await this.drawLogo(pdfDoc, page);
 
     return shouldDeploy
       ? this.deployCertificate(pdfDoc, studentName)
@@ -253,6 +255,24 @@ class Service {
       size: 16,
       color: titleColor,
       font: boldFont,
+    });
+  }
+
+  private async drawLogo(pdfDoc: PDFDocument, page: PDFPage) {
+    const logoUrl =
+      "https://firebasestorage.googleapis.com/v0/b/up-skillium.appspot.com/o/up-skillium%2Fassets%2Fupskillium-certificate-logo.png?alt=media&token=c66d6735-8889-483b-937e-297484c8b4b2";
+    const logoBytes = await fetch(logoUrl).then((res) => res.arrayBuffer());
+    const logoImage = await pdfDoc.embedPng(logoBytes);
+
+    const logoWidth = 200;
+    const logoHeight = (logoImage.height / logoImage.width) * logoWidth;
+    const bottomRightMargin = 25;
+
+    page.drawImage(logoImage, {
+      x: page.getWidth() - logoWidth - bottomRightMargin,
+      y: bottomRightMargin,
+      width: logoWidth,
+      height: logoHeight,
     });
   }
 
