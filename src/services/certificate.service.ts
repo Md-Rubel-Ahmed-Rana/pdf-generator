@@ -4,11 +4,13 @@ import textWrapLineBreaker from "../utils/textWrapLineBreaker";
 import fs from "fs";
 import path from "path";
 import { FileUploadMiddleware } from "../middlewares/fileUploaderMiddleware";
+import config from "../config/envConfig";
 
 class Service {
   public async createCertificate(
     data: ICertificate,
-    shouldDeploy: boolean = false
+    shouldDeploy: boolean = false,
+    score: number
   ): Promise<string> {
     const { studentName, courseName, technologies } = data;
     const pdfDoc = await PDFDocument.create();
@@ -77,6 +79,10 @@ class Service {
 
     await this.drawLogo(pdfDoc, page);
 
+    await this.drawBadge(pdfDoc, page, score);
+
+    await this.drawCertificateSlogan(pdfDoc, page);
+
     await this.drawCeoSignature(pdfDoc, page, colors, fonts);
 
     await this.drawCAOSignature(pdfDoc, page, colors, fonts);
@@ -133,6 +139,58 @@ class Service {
       size: 22,
       color: colors.purpleColor,
       font: fonts.boldFont,
+    });
+  }
+
+  private async drawBadge(pdfDoc: PDFDocument, page: PDFPage, score: number) {
+    let badgeUrl;
+    if (score >= 80) {
+      badgeUrl = config.certificate.badges.level1;
+    } else if (score >= 60) {
+      badgeUrl = config.certificate.badges.level2;
+    } else if (score >= 40) {
+      badgeUrl = config.certificate.badges.level3;
+    } else if (score >= 20) {
+      badgeUrl = config.certificate.badges.level4;
+    } else {
+      return;
+    }
+
+    const badgeBytes = await fetch(badgeUrl).then((res) => res.arrayBuffer());
+    const badgeImage = await pdfDoc.embedPng(badgeBytes);
+
+    const badgeWidth = 100;
+    const badgeHeight = (badgeImage.height / badgeImage.width) * badgeWidth;
+
+    const badgePadding = 50;
+
+    page.drawImage(badgeImage, {
+      x: page.getWidth() - badgeWidth - badgePadding,
+      y: page.getHeight() - badgeHeight - badgePadding,
+      width: badgeWidth,
+      height: badgeHeight,
+    });
+  }
+
+  private async drawCertificateSlogan(pdfDoc: PDFDocument, page: PDFPage) {
+    let sloganImageUrl = config.certificate.sloganUrl;
+
+    const sloganBytes = await fetch(sloganImageUrl).then((res) =>
+      res.arrayBuffer()
+    );
+    const sloganImage = await pdfDoc.embedPng(sloganBytes);
+
+    const sloganWidth = 100;
+    const sloganHeight = (sloganImage.height / sloganImage.width) * sloganWidth;
+
+    const sloganXPosition = 50;
+    const sloganYPosition = page.getHeight() - sloganHeight - 50;
+
+    page.drawImage(sloganImage, {
+      x: sloganXPosition,
+      y: sloganYPosition,
+      width: sloganWidth,
+      height: sloganHeight,
     });
   }
 
@@ -263,18 +321,16 @@ class Service {
   }
 
   private async drawLogo(pdfDoc: PDFDocument, page: PDFPage) {
-    const logoUrl =
-      "https://firebasestorage.googleapis.com/v0/b/up-skillium.appspot.com/o/up-skillium%2Fassets%2Fupskillium-certificate-logo.png?alt=media&token=c66d6735-8889-483b-937e-297484c8b4b2";
+    const logoUrl = config.certificate.logoUrl;
     const logoBytes = await fetch(logoUrl).then((res) => res.arrayBuffer());
     const logoImage = await pdfDoc.embedPng(logoBytes);
 
     const logoWidth = 200;
     const logoHeight = (logoImage.height / logoImage.width) * logoWidth;
-    const bottomRightMargin = 25;
 
     page.drawImage(logoImage, {
-      x: page.getWidth() - logoWidth - bottomRightMargin,
-      y: bottomRightMargin,
+      x: page.getWidth() - logoWidth - 25,
+      y: 28,
       width: logoWidth,
       height: logoHeight,
     });
@@ -286,8 +342,7 @@ class Service {
     colors: { bodyColor: RGB },
     fonts: { font: PDFFont; boldFont: PDFFont }
   ) {
-    const ceoSignatureUrl =
-      "https://firebasestorage.googleapis.com/v0/b/up-skillium.appspot.com/o/up-skillium%2Fassets%2Frubel-signature.png?alt=media&token=9e49c00e-e788-4cae-9d71-c687ea68b023";
+    const ceoSignatureUrl = config.certificate.ceoSignatureUrl;
     const signatureBytes = await fetch(ceoSignatureUrl).then((res) =>
       res.arrayBuffer()
     );
@@ -303,7 +358,7 @@ class Service {
       height: signatureHeight,
     });
 
-    page.drawText("Rubel Ahmed Rana", {
+    page.drawText("Md Rubel Ahmed Rana", {
       x: 50,
       y: 50,
       size: 12,
@@ -319,14 +374,14 @@ class Service {
       font: fonts.font,
     });
   }
+
   private async drawCAOSignature(
     pdfDoc: PDFDocument,
     page: PDFPage,
     colors: { bodyColor: RGB },
     fonts: { font: PDFFont; boldFont: PDFFont }
   ) {
-    const caoSignatureUrl =
-      "https://firebasestorage.googleapis.com/v0/b/up-skillium.appspot.com/o/up-skillium%2Fassets%2Fnajim-signature.png?alt=media&token=e1f6018a-0186-4bba-abbf-5dc85b2c4b69";
+    const caoSignatureUrl = config.certificate.caoSignatureUrl;
     const signatureBytes = await fetch(caoSignatureUrl).then((res) =>
       res.arrayBuffer()
     );

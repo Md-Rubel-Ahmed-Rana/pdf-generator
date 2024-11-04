@@ -5,9 +5,11 @@ class Controller {
   async createCertificate(req: Request, res: Response) {
     try {
       const shouldDeploy = req.query?.shouldDeploy as unknown as boolean;
+      const score = Number(req.query?.score as unknown as number);
       const result = await CertificateService.createCertificate(
         req.body,
-        shouldDeploy
+        shouldDeploy,
+        score
       );
       res.status(201).json({
         statusCode: 201,
